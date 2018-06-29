@@ -598,29 +598,12 @@ def parser():
         lookahead = anaLex()
     P()
     if lookahead == "FIM":
-        ## print("< OK - Sucesso >")
-        geraCodigo()
+        print("< OK - Sucesso >")
+        ##geraCodigo()
 
     else:
         print("fim de arquivo inesperado")
         exit()
-
-## ------------------  ANALISADOR SINTATICO / PARSER --------------------------
-def geraCodigo():
-    global lookahead
-    lookahead = anaLex()
-    while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
-        lookahead = anaLex()
-
-    P()
-
-    if lookahead == "FIM":
-        print("< OK - codigo gerado >")
-
-    else:
-        print("fim de arquivo inesperado")
-        exit()
-
 
 
 if __name__ == '__main__':
