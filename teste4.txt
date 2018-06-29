@@ -1,0 +1,26 @@
+var g : integer;
+
+procedure p;
+  begin
+  writeln(0)
+  end
+
+procedure q( n : integer; var ok : boolean );
+  var i, s : integer;
+  begin
+  i:= 1;
+  s:= 0;
+  while i < n do
+    begin
+    s:= s + i*i;
+    i:= i + 1
+    end;
+  if i div 3 = 0
+  then
+    ok:= true
+  else
+    ok:= false
+  end
+{ Teste de comentario }
+(* Teste de outro
+comentario *)

@@ -1,0 +1,16 @@
+(* Tests aritmetics functions.
+  Expected result: 1,2,3,4,5,6,7,8,9,10,11 *)
+program arithmetic;
+begin
+  write(1);
+  write(1+1);
+  write(2*1+1);
+  write((1+1)+2);
+  write(3+1*2);
+  write(3*2);
+  write(2*2*2-1);
+  write(16 div 2);
+  write(16 div 2 + 1);
+  write((2+3)*2);
+  write(100 div 9);
+end.
