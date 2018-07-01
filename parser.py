@@ -605,7 +605,21 @@ def parser():
         print("fim de arquivo inesperado")
         exit()
 
+## -------------- Gera Codigo -------
+def Gera(rotulo, codigo, par1, par2, par3):
+    print ("{} {} {} {}".rotulo,codigo,par1,par2,par3)
+def Gera(rotulo, codigo, par1, par2):
+    print ("{} {} {} {}".rotulo,codigo,par1,par2)
+def Gera(rotulo, codigo, par1):
+    print ("{} {} {}".rotulo,codigo,par1)
+def Gera(rotulo, codigo):
+    print ("{} {}".rotulo,codigo)
 
+def Termo(t):
+    Fator(t)
+
+def Fator(t):
+    Gera("Branco","teste")
 if __name__ == '__main__':
     arq = input() ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
@@ -617,6 +631,7 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     parser()
+
     while ilexema < tamTexto:  ## rodar loop até  o indice lexema percorrer vetor inteiro
         ##print("indice do lexema: ",ilexema)
         token = anaLex()
