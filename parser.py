@@ -2,6 +2,8 @@
 ## variaveis globais
 lookahead = ""
 lines = 0
+nivel = 0
+deslocamento = 0
 ## ------------------  ANALISADOR LEXICO --------------------------
 
 # DEFINIÇÕES REGULARES
@@ -99,6 +101,7 @@ def anaLex():  ## Analisador Lexico
     global lexema
     global texto
     global linhas
+    global lines
     estado_atual = 0
     prox_estado = 0
     next = proximoSimbolo()
@@ -131,6 +134,7 @@ def anaLex():  ## Analisador Lexico
 
         elif prox_estado == 78:
             linhas +=1
+            lines+=1
             prox_estado = 9
         elif prox_estado == 59:
 
@@ -191,8 +195,8 @@ def anaLex():  ## Analisador Lexico
             return "DOT"
         elif prox_estado == 57:
             #ilexema += 1
-            #return "COMMENT"
-            return None
+            return "COMMENT"
+            #return None
         elif prox_estado == 78:
             return "CHARACTER CONSTANT".upper() ## character constant
 
@@ -599,6 +603,7 @@ def parser():
     P()
     if lookahead == "FIM":
         print("< OK - Sucesso >")
+        return "< OK - Sucesso >"
         ##geraCodigo()
 
     else:
@@ -620,6 +625,19 @@ def Termo(t):
 
 def Fator(t):
     Gera("Branco","teste")
+
+def mepa():
+    ## analisa gramatica e imprime mepa na tela
+    global lookahead
+    global lexema
+    lookahead = anaLex()
+    while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
+        lookahead = anaLex()
+
+
+    print(lookahead, lexema)
+
+
 if __name__ == '__main__':
     arq = input() ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
@@ -627,11 +645,21 @@ if __name__ == '__main__':
     strTexto = textoToString(texto)  ## vetor de caracteres do texto inteiro já maiusculo
     arquivo = strTexto
     tamTexto = len(arquivo)
-    linhas = 2
+    lines = 0
     token = ""
     FIM = tamTexto
-    parser()
+    compilacao = ""
+    compilacao = parser()
+    ##print(compilacao)
 
+    ##for keys, values in simbolos.items():
+      ##  print(keys, values)
+
+
+
+
+
+    '''
     while ilexema < tamTexto:  ## rodar loop até  o indice lexema percorrer vetor inteiro
         ##print("indice do lexema: ",ilexema)
         token = anaLex()
@@ -644,6 +672,6 @@ if __name__ == '__main__':
             linhas += 1
         if token == "ERRO_LEXICO":
             break
-
+    '''
 
     f.close()
