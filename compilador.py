@@ -606,6 +606,65 @@ def parser():
 
 ## ------------------  ANALISADOR SINTATICO / PARSER --------------------------
 
+
+## -------------- Gera Codigo -------
+def Gera(rotulo, codigo, par1, par2, par3):
+    print ("{} {} {} {}".rotulo,codigo,par1,par2,par3)
+def Gera(rotulo, codigo, par1, par2):
+    print ("{} {} {} {}".rotulo,codigo,par1,par2)
+def Gera(rotulo, codigo, par1):
+    print ("{} {} {}".rotulo,codigo,par1)
+def Gera(rotulo, codigo):
+    print ("{} {}".rotulo,codigo)
+
+## Copia da procedura que esta no livro
+def Termo(t):
+    Fator(t)
+    ## simbolo pertence ao conjunto decodigo multiplicação, divisao e conjuntura
+    while(simbolo1):
+        s = simbolo1
+        anaLex()
+        Fator(t1)
+        if s == cod_mult:
+            Gera(" ", "MULT")
+            t2 = "inteiro"
+        elif s == cod_div:
+            Gera(" ", "DIVI")
+            t2 = "inteiro"
+        elif s == cod_conj:
+            Gera(" ", "CONJ")
+            t2 = "booleano"
+
+        if t != t2 or t!=t2:
+            print("ERRO")
+def Fator(t):
+    if simbolo1 == cod_numero:
+        Gera(" ", "CRTC", atomo1)
+        t = "inteiro"
+        anaLex()
+    elif simbolo1 == cod_ID:
+        k = simbolos.has_key(atomo1)
+        if k == 0:
+            print ("ERRO")
+        atr = tab_simbolo[atomo1]
+
+
+
+
+
+def mepa():
+    ## analisa gramatica e imprime mepa na tela
+    global lookahead
+    global lexema
+    lookahead = anaLex()
+    while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
+        lookahead = anaLex()
+
+
+    print(lookahead, lexema)
+
+
+
 if __name__ == '__main__':
     arq = input() ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
@@ -617,6 +676,25 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     parser()
+
+
+
+
+
+
+
+    ## testando tabela de simbolos usando o dict, minha idéia é manter o dicionário para ter certeza da existencia de apenas 1 termo para cada coisa
+    '''
+    texto3 = ['and', 'or']
+    tab_simbolos = dict(AND=texto3, ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
+                    ELSE='ELSE', END='END', FALSE='FALSE', FUNCTION='FUNCTION', IF='IF',
+                    INTEGER='INTEGER', NOT='NOT', OF='OF', OR='OR', PROCEDURE='PROCEDURE', PROGRAM='PROGRAM',
+                    READ='READ',
+                    THEN='THEN', TRUE='TRUE', VAR='VAR', WHILE='WHILE', WRITE='WRITE')
+    for keys, values in tab_simbolos.items():
+      print(keys, values)
+    '''
+    '''
     while ilexema < tamTexto:  ## rodar loop até  o indice lexema percorrer vetor inteiro
         ##print("indice do lexema: ",ilexema)
         token = anaLex()
@@ -629,5 +707,5 @@ if __name__ == '__main__':
             linhas += 1
         if token == "ERRO_LEXICO":
             break
-
+    '''
     f.close()
