@@ -711,8 +711,9 @@ if __name__ == '__main__':
 
 
     for keys, values in simbolos.items():
-        if inspect.isclass(values) :
-            print (keys, simbolos[keys].category)
+
+        if inspect._is_type(values) :
+            print (keys, simbolos[keys])
 
 
 
