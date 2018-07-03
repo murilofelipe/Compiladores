@@ -2,6 +2,25 @@
 ## variaveis globais
 lookahead = ""
 lines = 0
+
+
+class symbolTabel:
+
+	identifier = ''
+	category = ""
+	level = 0
+	variantInfo = []
+
+	def __init__(self,id,cat,lvl,varInfo):
+		self.identifier = id
+		self.category = cat
+		self.lvl = lvl
+		self.variantInfo = varInfo
+
+
+
+
+
 ## ------------------  ANALISADOR LEXICO --------------------------
 
 # DEFINIÇÕES REGULARES
@@ -14,7 +33,7 @@ lines = 0
 # character→qualquer caracter do alfabeto
 # vcharacter→qualquer caracter do alfabeto, exceto o “\n”
 # comment→(∗character∗∗)| {vcharacter}
-#
+
 # DELIMITADORES
 # delim→‘ ’|‘\t’|‘\n’
 # ws→delim+
@@ -89,7 +108,8 @@ def isReservedOrSymbol(atomo):
     if atomo.upper() in simbolos:
         return simbolos[atomo.upper()]
     else:
-        simbolos[atomo] = "IDENTIFIER".upper()
+        ##simbolos[atomo] = "IDENTIFIER".upper()
+        simbolos[atomo] = symbolTabel(atomo, "cat", 0, [1, 2, 3])
         return simbolos[atomo]
 
 
@@ -665,6 +685,7 @@ def mepa():
 
 
 
+
 if __name__ == '__main__':
     arq = input() ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
@@ -678,6 +699,16 @@ if __name__ == '__main__':
     parser()
 
 
+    x = symbolTabel('x', "category", 0, [1, 2])
+    simbolos['x'] = x
+
+    y = symbolTabel('y', "cat", 0, [1, 2, 3])
+    simbolos['y'] = y
+
+    for keys, values in simbolos.items():
+        print (keys,values)
+
+    print(simbolos['y'].variantInfo[2])
 
 
 
