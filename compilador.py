@@ -1,8 +1,12 @@
 # Alunos: Murilo Silva Felipe e Leozitor Floro de Souza
 ## variaveis globais
+
+import inspect
+
 lookahead = ""
 lines = 0
-
+nivel =0
+deslocamento =0
 
 class symbolTabel:
 
@@ -105,12 +109,14 @@ tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 2
 
 ## Verifica se atomo é palavra reservada ou se contem na tabela de simbolos
 def isReservedOrSymbol(atomo):
+    global nivel
+    global deslocamento
     if atomo.upper() in simbolos:
         return simbolos[atomo.upper()]
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
-        simbolos[atomo] = symbolTabel(atomo, "cat", 0, [1, 2, 3])
-        return simbolos[atomo]
+        simbolos[atomo] = symbolTabel("IDENTIFIER", "VARS", nivel, ["Integer",deslocamento])
+        return simbolos[atomo].identifier
 
 
 ## Retorna o próximo token do arquivo lido de entrada
@@ -137,6 +143,7 @@ def anaLex():  ## Analisador Lexico
             return "ERRO_LEXICO"
         elif prox_estado == 52:
             ##print("ID")
+
             return isReservedOrSymbol(lexema)
 
         elif prox_estado == 55:
@@ -153,7 +160,6 @@ def anaLex():  ## Analisador Lexico
             linhas +=1
             prox_estado = 9
         elif prox_estado == 59:
-
             return "COLON"
         elif prox_estado == 60:
 
@@ -339,11 +345,15 @@ def VDP():  ## <variable declaration part>
 def VD():  ## <variable declaration>
     global lookahead
     global lines
+    global deslocamento
     if lookahead == "IDENTIFIER":
         consome("IDENTIFIER")
+        deslocamento +=1
+
         while lookahead == "COMMA":
             consome("COMMA")
             consome("IDENTIFIER")
+            deslocamento+=1
         consome("COLON")
         T()
     else:
@@ -699,16 +709,12 @@ if __name__ == '__main__':
     parser()
 
 
-    x = symbolTabel('x', "category", 0, [1, 2])
-    simbolos['x'] = x
-
-    y = symbolTabel('y', "cat", 0, [1, 2, 3])
-    simbolos['y'] = y
 
     for keys, values in simbolos.items():
-        print (keys,values)
+        if inspect.isclass(values) :
+            print (keys, simbolos[keys].category)
 
-    print(simbolos['y'].variantInfo[2])
+
 
 
 
