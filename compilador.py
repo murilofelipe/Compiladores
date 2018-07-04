@@ -21,8 +21,6 @@ class symbolTabel:         # classe tabela de simbolos
         self.lvl = lvl
         self.variantInfo = varInfo
 
-
-
 ## ------------------  ANALISADOR LEXICO --------------------------
 
 # DEFINIÇÕES REGULARES
@@ -45,7 +43,6 @@ class symbolTabel:         # classe tabela de simbolos
 # lb→]              rp→)        ne→<>           minus→ −    equal→=     gt→>            times→ ∗
 # colon→:           rb→]        le→<=           lt→<        plus→+
 ##
-
 # * Processo do algoritmo.
 ##
 
@@ -70,7 +67,6 @@ nonAttTokens = dict(ASSING_OP=':=', GE='>=', RP=')', GT='>', LE='<=', LP='(', DO
                     SEMICOLON=';', COMMA=',', MINUS='-', COLON=':', PLUS='+', DOT='.', LB='[', EQUALS='=', RB=']')
 delim = dict(EMBRANCO=' ',TAB='\t',QUEBRALINHA='\n')
 attTokens = dict(DIGIT="digits".upper(), ID="identifier".upper(), NUM="num".upper(), COMMENT="comment".upper(), DELIM="ws".upper())  ## tipos de Tokens com atributos
-
 
                 ##  letra digito    ' ' \n  \t   (   {  :    >   )   <   .   +   ;   ,   -   [   *   ]   =   E   }  FIMArq    '    "       *** ESTADOS ***
 tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 28,  8, 26, 29, 27, 30, 12, -1, -1, -2,       4,   6],   ##    ESTADO 0
@@ -161,6 +157,7 @@ def anaLex():  ## Analisador Lexico
 
         elif prox_estado == 56:
             return symbolTabel("WS".upper(), " ", -1,[-1, -1])
+
         elif prox_estado == 77:
             return symbolTabel("LINHA", " ", -1,[-1, -1])
 
@@ -358,7 +355,6 @@ def VD():  ## <variable declaration>
     if lookahead == "IDENTIFIER":
         contador += 1  # deslocamento  varSimples
         consome("IDENTIFIER")
-
 
         while lookahead == "COMMA":
             consome("COMMA")
@@ -667,7 +663,6 @@ def corrigeTabSimbol():
             ##print (simbolos[i].identifier)
             deslocamento+=1
 
-
         if simbolos[i].identifier == "VAR":
             marcadorVAR = i
         if simbolos[i].identifier in tabTipo:
@@ -705,13 +700,13 @@ def atualizaTabSimbol():
 
 ## -------------- Gera Codigo -------
 def Gera(rotulo, codigo, par1, par2, par3):
-    print ("{} {} {} {}".rotulo,codigo,par1,par2,par3)
+    print ("{} {} {} {}".format(rotulo,codigo,par1,par2,par3))
 def Gera(rotulo, codigo, par1, par2):
-    print ("{} {} {} {}".rotulo,codigo,par1,par2)
+    print ("{} {} {} {}".format(rotulo,codigo,par1,par2))
 def Gera(rotulo, codigo, par1):
-    print ("{} {} {}".rotulo,codigo,par1)
+    print ("{} {} {}".format(rotulo,codigo,par1))
 def Gera(rotulo, codigo):
-    print ("{} {}".rotulo,codigo)
+    print ("{} {}".format(rotulo,codigo))
 
 ## Copia da procedura que esta no livro
 def Termo(t):
@@ -768,7 +763,6 @@ def mepa():
     else:
         print("fim de arquivo inesperado")
         exit()
-
 
 if __name__ == '__main__':
     arq = "teste1.pas" ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
