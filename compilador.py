@@ -5,25 +5,29 @@ import inspect
 
 lookahead = ""
 lines = 0
-nivel =0
-deslocamento =0
+nivel = 0
+deslocamento = 0
 
-class symbolTabel:
+class symbolTabel:         # classe tabela de simbolos
 
-	identifier = ''
-	category = ""
-	level = 0
-	variantInfo = []
+    identifier = ''
+    category = ""
+    level = 0
+    variantInfo = []
 
-	def __init__(self,id,cat,lvl,varInfo):
-		self.identifier = id
-		self.category = cat
-		self.lvl = lvl
-		self.variantInfo = varInfo
-
-
+    def __init__(self,id,cat,lvl,varInfo):
+        self.identifier = id
+        self.category = cat
+        self.lvl = lvl
+        self.variantInfo = varInfo
 
 
+class palavraReservada:     # classe palavra reservada
+
+    name = ""
+
+    def __init__(self,name):
+        self.name = name
 
 ## ------------------  ANALISADOR LEXICO --------------------------
 
@@ -59,7 +63,8 @@ arquivo = ""
 FIM = 0
 
 # criacao de dicionário de Simbolos
-simbolos = dict(AND='AND', ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
+simbolos = dict()   # Tabela de Simbolos
+palavrasReservadas = dict(AND='AND', ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
                 ELSE='ELSE', END='END', FALSE='FALSE', FUNCTION='FUNCTION', IF='IF',
                 INTEGER='INTEGER', NOT='NOT', OF='OF', OR='OR', PROCEDURE='PROCEDURE', PROGRAM='PROGRAM', READ='READ',
                 THEN='THEN', TRUE='TRUE', VAR='VAR', WHILE='WHILE', WRITE='WRITE')
@@ -71,7 +76,7 @@ delim = dict(EMBRANCO=' ',TAB='\t',QUEBRALINHA='\n')
 attTokens = dict(DIGIT="digits".upper(), ID="identifier".upper(), NUM="num".upper(), COMMENT="comment".upper(), DELIM="ws".upper())  ## tipos de Tokens com atributos
 
 
-               ##  letra digito    ' ' \n  \t   (   {  :    >   )   <   .   +   ;   ,   -   [   *   ]   =   E   }  FIMArq    '    "       *** ESTADOS ***
+                ##  letra digito    ' ' \n  \t   (   {  :    >   )   <   .   +   ;   ,   -   [   *   ]   =   E   }  FIMArq    '    "       *** ESTADOS ***
 tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 28,  8, 26, 29, 27, 30, 12, -1, -1, -2,       4,   6],   ##    ESTADO 0
                     [ 1,    1,     52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52, 52,      52,  52],   ##    ESTADO 1 -- Retorna 52 para Identificador
                     [55,    2,     55, 55, 55, 55, 55, 55, 55, 55, 55,  3, 55, 55, 55, 55, 55, 55, 55, 55,  5, 55, 55,      55,  55],   ##    ESTADO 2 -- Retorna 55 para Digits
@@ -107,12 +112,22 @@ tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 2
                     [78,   78,     78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78,      78,  78],  ##    ESTADO 32 -- Retorna 78 para LINHA2 de comment
                  ]
 
+def PreencherTabSimbolos():
+    global simbolos
+    for keys in palavrasReservadas:
+        x = palavraReservada(palavrasReservadas[keys]) # adicionando atomo no objeto
+        simbolos[keys] = x  # adicionando objeto palavra reservada
+
+
+
+
 ## Verifica se atomo é palavra reservada ou se contem na tabela de simbolos
 def isReservedOrSymbol(atomo):
     global nivel
     global deslocamento
     if atomo.upper() in simbolos:
-        return simbolos[atomo.upper()]
+        return simbolos[atomo.upper()].name
+
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
         simbolos[atomo] = symbolTabel("IDENTIFIER", "VARS", nivel, ["Integer",deslocamento])
@@ -348,12 +363,12 @@ def VD():  ## <variable declaration>
     global deslocamento
     if lookahead == "IDENTIFIER":
         consome("IDENTIFIER")
-        deslocamento +=1
+        deslocamento +=1   # deslocamento  varSimples
 
         while lookahead == "COMMA":
             consome("COMMA")
             consome("IDENTIFIER")
-            deslocamento+=1
+            deslocamento+=1    #deslocamento varSimples
         consome("COLON")
         T()
     else:
@@ -623,6 +638,7 @@ def consome(token):
 
 def parser():
     global lookahead
+    PreencherTabSimbolos()
     lookahead = anaLex()
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex()
@@ -697,7 +713,7 @@ def mepa():
 
 
 if __name__ == '__main__':
-    arq = input() ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
+    arq = "teste1.pas" ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
     texto = f.readlines()  ## lista de linhas  do texto
     strTexto = textoToString(texto)  ## vetor de caracteres do texto inteiro já maiusculo
@@ -707,6 +723,7 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     parser()
+
 
 
 
