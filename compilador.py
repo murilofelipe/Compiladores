@@ -7,6 +7,7 @@ lookahead = ""
 lines = 0
 nivel = 0
 deslocamento = 0
+identificaCategoria = -1
 
 class symbolTabel:         # classe tabela de simbolos
 
@@ -57,7 +58,9 @@ arquivo = ""
 FIM = 0
 
 # criacao de dicionário de Simbolos
-simbolos = dict()   # Tabela de Simbolos
+simbolos = []   # Tabela de Simbolos
+tabTipo = dict(INTEGER='INTEGER',DOUBLE='DOUBLE',BOOLEAN='BOOLEAN')
+
 palavrasReservadas = dict(AND='AND', ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
                 ELSE='ELSE', END='END', FALSE='FALSE', FUNCTION='FUNCTION', IF='IF',
                 INTEGER='INTEGER', NOT='NOT', OF='OF', OR='OR', PROCEDURE='PROCEDURE', PROGRAM='PROGRAM', READ='READ',
@@ -109,21 +112,23 @@ tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 2
 def PreencherTabSimbolos():   ## preenche palavra reservadas como objetos
     global simbolos
     for keys in palavrasReservadas:
-        x = symbolTabel(palavrasReservadas[keys],"PalavraReservada",-1,[]) # adicionando atomo no objeto
+        x = symbolTabel(palavrasReservadas[keys],"PalavraReservada",-1,["Reservado",-1]) # adicionando atomo no objeto
         simbolos[keys] = x  # adicionando objeto palavra reservada
 
 ## Verifica se atomo é palavra reservada ou se contem na tabela de simbolos
 def isReservedOrSymbol(atomo):
-    global nivel
-    global deslocamento
-    if atomo.upper() in simbolos:
-        return simbolos[atomo.upper()].identifier
+
+    if atomo.upper() in palavrasReservadas:
+        x = symbolTabel(atomo.upper(), "PalavraReservada", -1,["Reservado", -1])  # adicionando atomo no objeto
+        simbolos.append(x) # adicionando objeto palavra reservada
 
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
-        simbolos[atomo] = symbolTabel("IDENTIFIER", "VARS", nivel, ["Integer",deslocamento])
-        return simbolos[atomo].identifier
+        x = symbolTabel("IDENTIFIER", " ", nivel, [-1,-1])
+        y = symbolTabel(atomo.upper(), " ", nivel, [-1,-1])
+        simbolos.append(y)
 
+    return x.identifier
 ## Retorna o próximo token do arquivo lido de entrada
 def anaLex():  ## Analisador Lexico
     global ilexema
@@ -148,7 +153,7 @@ def anaLex():  ## Analisador Lexico
             return "ERRO_LEXICO"
         elif prox_estado == 52:
             ##print("ID")
-
+            ##print(lexema)
             return isReservedOrSymbol(lexema)
 
         elif prox_estado == 55:
@@ -349,15 +354,16 @@ def VDP():  ## <variable declaration part>
 def VD():  ## <variable declaration>
     global lookahead
     global lines
-    global deslocamento
+#    global deslocamento
+
     if lookahead == "IDENTIFIER":
         consome("IDENTIFIER")
-        deslocamento +=1   # deslocamento  varSimples
+#        deslocamento +=1   # deslocamento  varSimples
 
         while lookahead == "COMMA":
             consome("COMMA")
             consome("IDENTIFIER")
-            deslocamento+=1    #deslocamento varSimples
+#            deslocamento+=1    #deslocamento varSimples
         consome("COLON")
         T()
     else:
@@ -627,7 +633,7 @@ def consome(token):
 
 def parser():
     global lookahead
-    PreencherTabSimbolos()
+##    PreencherTabSimbolos()
     lookahead = anaLex()
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex()
@@ -640,6 +646,47 @@ def parser():
         exit()
 
 ## ------------------  ANALISADOR SINTATICO / PARSER --------------------------
+
+# -------------- Corrige tabela de simbolos -------
+def corrigeTabSimbol():
+    deslocamento = 0
+    marcadorVAR = -1
+    tipoEncontrado = -1
+    marcaTipo = -1
+    for i in range(len(simbolos)):
+
+        if marcadorVAR != -1 and simbolos[i].category != "PalavraReservada":
+            simbolos[i].variantInfo[1]=deslocamento
+            simbolos[i].category = "VARS"
+            ##print (simbolos[i].identifier)
+            deslocamento+=1
+
+
+        if simbolos[i].identifier == "VAR":
+            marcadorVAR = i
+        if simbolos[i].identifier in tabTipo:
+            tipoEncontrado=tabTipo[simbolos[i].identifier]
+            marcaTipo=i
+
+            for j in range(len(simbolos)):
+                if j != marcaTipo :
+                    simbolos[j].variantInfo[0] = tipoEncontrado
+                else:
+                    break
+
+        if simbolos[i].identifier == "BEGIN":
+            marcadorVAR=-1
+#        print (simbolos[i].identifier)
+
+
+    print ("-----------------------------------------------")
+
+
+
+
+    for i in range(len(simbolos)):
+
+        print (simbolos[i].identifier,simbolos[i].category,simbolos[i].variantInfo[0],simbolos[i].variantInfo[1] )
 
 
 ## -------------- Gera Codigo -------
@@ -711,15 +758,15 @@ if __name__ == '__main__':
     linhas = 2
     token = ""
     FIM = tamTexto
+
+
     parser()
 
+    corrigeTabSimbol()
 
 
-
-    for keys, values in simbolos.items():
-
-        if inspect._is_type(values) :
-            print (keys, simbolos[keys])
+    #for keys, values in simbolos.items():
+     #   print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
 
 
