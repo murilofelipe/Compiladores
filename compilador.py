@@ -6,8 +6,7 @@ import inspect
 lookahead = ""
 lines = 0
 nivel = 0
-deslocamento = 0
-identificaCategoria = -1
+contador = 0
 
 class symbolTabel:         # classe tabela de simbolos
 
@@ -124,10 +123,10 @@ def isReservedOrSymbol(atomo):
 
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
-        x = symbolTabel("IDENTIFIER", " ", nivel, [-1,-1])
+        x = symbolTabel("IDENTIFIER", "VARS", nivel, ["INTEGER",-1])
         simbolos[atomo.upper()] = x
 
-    return x.identifier
+    return x
 ## Retorna o próximo token do arquivo lido de entrada
 def anaLex():  ## Analisador Lexico
     global ilexema
@@ -143,13 +142,13 @@ def anaLex():  ## Analisador Lexico
         ##print("Estado Atual:", estado_atual)
         ##print("next é: ",next)
         if next == -1:
-            return "ERRO_LEXICO"
+            return symbolTabel("ERRO_LEXICO", " ", -1,[-1, -1])
 
         prox_estado = tabelaEstados[estado_atual][next]
 
         ##print("proximo Estado:", prox_estado)
         if prox_estado == -1:
-            return "ERRO_LEXICO"
+            return symbolTabel("ERRO_LEXICO", " ", -1,[-1, -1])
         elif prox_estado == 52:
             ##print("ID")
             ##print(lexema)
@@ -158,78 +157,79 @@ def anaLex():  ## Analisador Lexico
         elif prox_estado == 55:
             ##print("Digits")
             ##print(lexema)
-            return "INTEGER CONSTANT".upper()  ## Antigo Digits
+            return symbolTabel("INTEGER CONSTANT".upper(), " ", -1,[-1, -1])  ## Antigo Digits
 
         elif prox_estado == 56:
-            return "WS"
+            return symbolTabel("WS".upper(), " ", -1,[-1, -1])
         elif prox_estado == 77:
-            return "LINHA"
+            return symbolTabel("LINHA", " ", -1,[-1, -1])
 
         elif prox_estado == 78:
             linhas +=1
             prox_estado = 9
         elif prox_estado == 59:
-            return "COLON"
+            return symbolTabel("COLON", " ", -1,[-1, -1])
         elif prox_estado == 60:
 
-            return "ASSIGN_OP"
+            return symbolTabel("ASSIGN_OP", " ", -1,[-1, -1])
         elif prox_estado == 61:
 
-            return "GT"
+            return symbolTabel("GT", " ", -1,[-1, -1])
         elif prox_estado == 62:
 
-            return "GE"
+            return symbolTabel("GE", " ", -1, [-1, -1])
         elif prox_estado == 63:
 
-            return "LP"
+            return symbolTabel("LP", " ", -1, [-1, -1])
         elif prox_estado == 64:
+            return symbolTabel("RP", " ", -1, [-1, -1])
 
-            return "RP"
         elif prox_estado == 68:
+            return symbolTabel("LE", " ", -1, [-1, -1])
 
-            return "LE"
         elif prox_estado == 69:
+            return symbolTabel("LT", " ", -1, [-1, -1])
 
-            return "LT"
         elif prox_estado == 67:
+            return symbolTabel("NE", " ", -1, [-1, -1])
 
-            return "NE"
         elif prox_estado == 65:
+            return symbolTabel("DOTDOT", " ", -1, [-1, -1])
 
-            return "DOTDOT"
         elif prox_estado == 71:
+            return symbolTabel("SEMICOLON", " ", -1, [-1, -1])
 
-            return "SEMICOLON"
         elif prox_estado == 72:
+            return symbolTabel("COMMA", " ", -1, [-1, -1])
 
-            return "COMMA"
         elif prox_estado == 73:
+            return symbolTabel("MINUS", " ", -1, [-1, -1])
 
-            return "MINUS"
         elif prox_estado == 74:
+            return symbolTabel("LB", " ", -1, [-1, -1])
 
-            return "LB"
         elif prox_estado == 75:
+            return symbolTabel("TIMES", " ", -1, [-1, -1])
 
-            return "TIMES"
         elif prox_estado == 76:
+            return symbolTabel("RB", " ", -1, [-1, -1])
 
-            return "RB"
         elif prox_estado == 70:
+            return symbolTabel("PLUS", " ", -1, [-1, -1])
 
-            return "PLUS"
         elif prox_estado == 58:
+            return symbolTabel("EQUALS", " ", -1, [-1, -1])
 
-            return "EQUALS"
         elif prox_estado == 66:
+            return symbolTabel("DOT", " ", -1, [-1, -1])
 
-            return "DOT"
         elif prox_estado == 57:
             #ilexema += 1
             #return "COMMENT"
             return None
         elif prox_estado == 78:
-            return "CHARACTER CONSTANT".upper() ## character constant
+            return symbolTabel("CHARACTER CONSTANT".upper(), " ", -1, [-1, -1])
+             ## character constant
 
         lexema = lexema + arquivo[ilexema]
         estado_atual = prox_estado
@@ -353,16 +353,18 @@ def VDP():  ## <variable declaration part>
 def VD():  ## <variable declaration>
     global lookahead
     global lines
-#    global deslocamento
+    global contador
 
     if lookahead == "IDENTIFIER":
+        contador += 1  # deslocamento  varSimples
         consome("IDENTIFIER")
-#        deslocamento +=1   # deslocamento  varSimples
+
 
         while lookahead == "COMMA":
             consome("COMMA")
+            contador += 1  # deslocamento varSimples
             consome("IDENTIFIER")
-#            deslocamento+=1    #deslocamento varSimples
+
         consome("COLON")
         T()
     else:
@@ -610,17 +612,22 @@ def C():  # <Constant>
 def consome(token):
     global lookahead
     global lines
+    objeto = ""
+    global contador
    # print("DEBUG FUNÇÃO CONSOME ANTES DE COMPARAR ")
    # print(lookahead + " : LOOKAHEAD")  #debug
    # print(token + " : TOKEN")  # debug
     if lookahead == token:
         #print("LH = Token ")  ## DEBUG
         if ilexema < FIM:
-            lookahead = anaLex()
+
+            objeto = anaLex()
+            lookahead = objeto.identifier
+
             while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
                 if lookahead == "LINHA":  # contador de linhas
                     lines +=1
-                lookahead = anaLex()
+                lookahead = anaLex().identifier
         else:
             lookahead = "FIM"
      #   print("lookahead depois de chamar o lexteste: ", lookahead)
@@ -633,9 +640,9 @@ def consome(token):
 def parser():
     global lookahead
 ##    PreencherTabSimbolos()
-    lookahead = anaLex()
+    lookahead = anaLex().identifier
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
-        lookahead = anaLex()
+        lookahead = anaLex().identifier
     P()
     if lookahead == "FIM":
         print("< OK - Sucesso >")
@@ -688,15 +695,13 @@ def corrigeTabSimbol():
         print (simbolos[i].identifier,simbolos[i].category,simbolos[i].variantInfo[0],simbolos[i].variantInfo[1] )
 
 def atualizaTabSimbol():
-    marcaVAR =-1
-    marcaBEGIN=-1
+    deslocamento = -1
+    for keys,values in simbolos.items():
+        if values.category == "VARS":
+            values.variantInfo[1] = deslocamento
+            deslocamento+=1
 
-    for keys, values in simbolos.items():
-        marcaVAR+=1
-        if keys == "VAR":
-            break
 
-    print (simbolos(marcaVAR))
 
 ## -------------- Gera Codigo -------
 def Gera(rotulo, codigo, par1, par2, par3):
@@ -741,20 +746,28 @@ def Fator(t):
 
 
 
+def inicia():
 
+    Gera(" ","INPP") ##PROGRAM
+    objeto = anaLex() ## Identifier
+    P()
 
 def mepa():
     ## analisa gramatica e imprime mepa na tela
     global lookahead
     global lexema
-    lookahead = anaLex()
+    objeto = anaLex()
+    lookahead = anaLex().identifier
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
-        lookahead = anaLex()
+        lookahead = anaLex().identifier
 
+    inicia()
+    if lookahead == "FIM":
+        print("< OK - Sucesso >")
 
-    print(lookahead, lexema)
-
-
+    else:
+        print("fim de arquivo inesperado")
+        exit()
 
 
 if __name__ == '__main__':
@@ -776,11 +789,18 @@ if __name__ == '__main__':
 
     atualizaTabSimbol()
 
-    for keys, values in simbolos.items():
-        print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
+    ##for keys, values in simbolos.items():
+    ##    print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
-
+    ilexema=0
+    lexema=""
+    arquivo = strTexto
+    tamTexto = len(arquivo)
+    linhas = 2
+    token = ""
+    FIM = tamTexto
+    mepa()
 
 
 
