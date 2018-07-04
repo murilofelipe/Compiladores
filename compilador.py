@@ -22,12 +22,6 @@ class symbolTabel:         # classe tabela de simbolos
         self.variantInfo = varInfo
 
 
-class palavraReservada:     # classe palavra reservada
-
-    name = ""
-
-    def __init__(self,name):
-        self.name = name
 
 ## ------------------  ANALISADOR LEXICO --------------------------
 
@@ -110,29 +104,25 @@ tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 2
                     [76,   76,     76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76, 76,      76,  76],   ##    ESTADO 30 -- Retorna 76 para RB
                     [77,   77,     77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77, 77,      77,  77],   ##    ESTADO 31 -- Retorna 77 para LINHA
                     [78,   78,     78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78,      78,  78],  ##    ESTADO 32 -- Retorna 78 para LINHA2 de comment
-                 ]
+                   ]
 
-def PreencherTabSimbolos():
+def PreencherTabSimbolos():   ## preenche palavra reservadas como objetos
     global simbolos
     for keys in palavrasReservadas:
-        x = palavraReservada(palavrasReservadas[keys]) # adicionando atomo no objeto
+        x = symbolTabel(palavrasReservadas[keys],"PalavraReservada",-1,[]) # adicionando atomo no objeto
         simbolos[keys] = x  # adicionando objeto palavra reservada
-
-
-
 
 ## Verifica se atomo é palavra reservada ou se contem na tabela de simbolos
 def isReservedOrSymbol(atomo):
     global nivel
     global deslocamento
     if atomo.upper() in simbolos:
-        return simbolos[atomo.upper()].name
+        return simbolos[atomo.upper()].identifier
 
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
         simbolos[atomo] = symbolTabel("IDENTIFIER", "VARS", nivel, ["Integer",deslocamento])
         return simbolos[atomo].identifier
-
 
 ## Retorna o próximo token do arquivo lido de entrada
 def anaLex():  ## Analisador Lexico
@@ -241,7 +231,6 @@ def anaLex():  ## Analisador Lexico
         estado_atual = prox_estado
         ilexema = ilexema + 1
         next = proximoSimbolo()
-
 
 # Lê proximo simbolo da entrada e retorna o número da coluna correspondente na tabela de estados
 def proximoSimbolo():  ## neste metodo será usado quando for para ignorar delimitadores
