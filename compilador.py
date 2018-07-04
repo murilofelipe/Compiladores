@@ -58,7 +58,7 @@ arquivo = ""
 FIM = 0
 
 # criacao de dicionário de Simbolos
-simbolos = []   # Tabela de Simbolos
+simbolos = dict()   # Tabela de Simbolos
 tabTipo = dict(INTEGER='INTEGER',DOUBLE='DOUBLE',BOOLEAN='BOOLEAN')
 
 palavrasReservadas = dict(AND='AND', ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
@@ -120,13 +120,12 @@ def isReservedOrSymbol(atomo):
 
     if atomo.upper() in palavrasReservadas:
         x = symbolTabel(atomo.upper(), "PalavraReservada", -1,["Reservado", -1])  # adicionando atomo no objeto
-        simbolos.append(x) # adicionando objeto palavra reservada
+        simbolos[atomo.upper()]=x # adicionando objeto palavra reservada
 
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
         x = symbolTabel("IDENTIFIER", " ", nivel, [-1,-1])
-        y = symbolTabel(atomo.upper(), " ", nivel, [-1,-1])
-        simbolos.append(y)
+        simbolos[atomo.upper()] = x
 
     return x.identifier
 ## Retorna o próximo token do arquivo lido de entrada
@@ -681,13 +680,23 @@ def corrigeTabSimbol():
 
     print ("-----------------------------------------------")
 
-
+    dicionarioTemp = dict()
 
 
     for i in range(len(simbolos)):
 
         print (simbolos[i].identifier,simbolos[i].category,simbolos[i].variantInfo[0],simbolos[i].variantInfo[1] )
 
+def atualizaTabSimbol():
+    marcaVAR =-1
+    marcaBEGIN=-1
+
+    for keys, values in simbolos.items():
+        marcaVAR+=1
+        if keys == "VAR":
+            break
+
+    print (simbolos(marcaVAR))
 
 ## -------------- Gera Codigo -------
 def Gera(rotulo, codigo, par1, par2, par3):
@@ -762,11 +771,13 @@ if __name__ == '__main__':
 
     parser()
 
-    corrigeTabSimbol()
+    # Para mexer nesta função deve alterar a tabela de simbolos para uma lista, e mudar a forma de adição na função de simbolos no lexico
+    #corrigeTabSimbol()
 
+    atualizaTabSimbol()
 
-    #for keys, values in simbolos.items():
-     #   print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
+    for keys, values in simbolos.items():
+        print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
 
 
