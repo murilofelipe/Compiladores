@@ -7,7 +7,7 @@ lookahead = ""
 lines = 0
 nivel = 0
 contador = 0
-listaCodigoLex = []   #TESTE LEO
+varType = "none"
 
 class symbolTabel:         # classe tabela de simbolos
 
@@ -114,14 +114,14 @@ def PreencherTabSimbolos():   ## preenche palavra reservadas como objetos
 
 ## Verifica se atomo é palavra reservada ou se contem na tabela de simbolos
 def isReservedOrSymbol(atomo):
-
+    global varType
     if atomo.upper() in palavrasReservadas:
         x = symbolTabel(atomo.upper(), "PalavraReservada", -1,["Reservado", -1])  # adicionando atomo no objeto
         simbolos[atomo.upper()]=x # adicionando objeto palavra reservada
 
     else:
         ##simbolos[atomo] = "IDENTIFIER".upper()
-        x = symbolTabel("IDENTIFIER", "VARS", nivel, ["INTEGER",-1])
+        x = symbolTabel("IDENTIFIER", varType, nivel, ["INTEGER",-1])
         simbolos[atomo.upper()] = x
 
     return x
@@ -339,7 +339,9 @@ def BLCK():  ## <block>
 
 def VDP():  ## <variable declaration part>
     global lookahead
+    global varType
     if lookahead == "VAR":
+        varType = "VARS"  #atualiza tipo de variavel que sera preenchido na tabela de simbolos
         consome("VAR")
         VD()
         consome("SEMICOLON")
@@ -635,13 +637,17 @@ def consome(token):
 
 def parser():
     global lookahead
-    global listaCodigoLex   ## teste leo
 ##    PreencherTabSimbolos()
     lookahead = anaLex().identifier
-    listaCodigoLex.append(lookahead) # teste leo
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex().identifier
     P()
+    for keys in simbolos:   # PRINT DEBUG
+        print(keys)    # PRINT DEBUG
+        print(simbolos[keys].identifier)  # print
+        print(simbolos[keys].category)  # print
+        print()
+
     if lookahead == "FIM":
         print("< OK - Sucesso >")
 
