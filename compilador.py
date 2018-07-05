@@ -7,6 +7,7 @@ lookahead = ""
 lines = 0
 nivel = 0
 contador = 0
+listaCodigoLex = []   #TESTE LEO
 
 class symbolTabel:         # classe tabela de simbolos
 
@@ -20,8 +21,6 @@ class symbolTabel:         # classe tabela de simbolos
         self.category = cat
         self.lvl = lvl
         self.variantInfo = varInfo
-
-
 
 ## ------------------  ANALISADOR LEXICO --------------------------
 
@@ -45,7 +44,6 @@ class symbolTabel:         # classe tabela de simbolos
 # lb→]              rp→)        ne→<>           minus→ −    equal→=     gt→>            times→ ∗
 # colon→:           rb→]        le→<=           lt→<        plus→+
 ##
-
 # * Processo do algoritmo.
 ##
 
@@ -71,7 +69,6 @@ nonAttTokens = dict(ASSING_OP=':=', GE='>=', RP=')', GT='>', LE='<=', LP='(', DO
                     SEMICOLON=';', COMMA=',', MINUS='-', COLON=':', PLUS='+', DOT='.', LB='[', EQUALS='=', RB=']')
 delim = dict(EMBRANCO=' ',TAB='\t',QUEBRALINHA='\n')
 attTokens = dict(DIGIT="digits".upper(), ID="identifier".upper(), NUM="num".upper(), COMMENT="comment".upper(), DELIM="ws".upper())  ## tipos de Tokens com atributos
-
 
                 ##  letra digito    ' ' \n  \t   (   {  :    >   )   <   .   +   ;   ,   -   [   *   ]   =   E   }  FIMArq    '    "       *** ESTADOS ***
 tabelaEstados = [   [ 1,    2,      3, 31,  3, 21, 11, 13, 15, 22, 17, 23, 25, 28,  8, 26, 29, 27, 30, 12, -1, -1, -2,       4,   6],   ##    ESTADO 0
@@ -162,6 +159,7 @@ def anaLex():  ## Analisador Lexico
 
         elif prox_estado == 56:
             return symbolTabel("WS".upper(), " ", -1,[-1, -1])
+
         elif prox_estado == 77:
             return symbolTabel("LINHA", " ", -1,[-1, -1])
 
@@ -316,13 +314,11 @@ def printToken(linha,token):  ## funcao faz impressao no formato Demandado
     else:
         print("< {}, {} >".format(linha, token.upper()))
 
-
 def textoToString(texto):  ## recebe uma lista de linhas e transforma num vetor de caracteres
     string = ""
     for i in range(len(texto)):
         string += texto[i]
     return string
-
 
 ## ------------------  ANALISADOR LEXICO --------------------------------------
 
@@ -359,7 +355,6 @@ def VD():  ## <variable declaration>
     if lookahead == "IDENTIFIER":
         contador += 1  # deslocamento  varSimples
         consome("IDENTIFIER")
-
 
         while lookahead == "COMMA":
             consome("COMMA")
@@ -640,8 +635,10 @@ def consome(token):
 
 def parser():
     global lookahead
+    global listaCodigoLex   ## teste leo
 ##    PreencherTabSimbolos()
     lookahead = anaLex().identifier
+    listaCodigoLex.append(lookahead) # teste leo
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex().identifier
     P()
@@ -668,7 +665,6 @@ def corrigeTabSimbol():
             ##print (simbolos[i].identifier)
             deslocamento+=1
 
-
         if simbolos[i].identifier == "VAR":
             marcadorVAR = i
         if simbolos[i].identifier in tabTipo:
@@ -685,11 +681,9 @@ def corrigeTabSimbol():
             marcadorVAR=-1
 #        print (simbolos[i].identifier)
 
-
     print ("-----------------------------------------------")
 
     dicionarioTemp = dict()
-
 
     for i in range(len(simbolos)):
 
@@ -702,17 +696,15 @@ def atualizaTabSimbol():
             values.variantInfo[1] = deslocamento
             deslocamento+=1
 
-
-
 ## -------------- Gera Codigo -------
 def Gera(rotulo, codigo, par1, par2, par3):
-    print ("{} {} {} {}".rotulo,codigo,par1,par2,par3)
+    print ("{} {} {} {}".format(rotulo,codigo,par1,par2,par3))
 def Gera(rotulo, codigo, par1, par2):
-    print ("{} {} {} {}".rotulo,codigo,par1,par2)
+    print ("{} {} {} {}".format(rotulo,codigo,par1,par2))
 def Gera(rotulo, codigo, par1):
-    print ("{} {} {}".rotulo,codigo,par1)
+    print ("{} {} {}".format(rotulo,codigo,par1))
 def Gera(rotulo, codigo):
-    print ("{} {}".rotulo,codigo)
+    print ("{} {}".format(rotulo,codigo))
 
 ## Copia da procedura que esta no livro
 def Termo(t):
@@ -745,8 +737,6 @@ def Fator(t):
             print ("ERRO")
         atr = tab_simbolo[atomo1]
 
-
-
 def inicia():
 
     Gera(" ","INPP") ##PROGRAM
@@ -770,7 +760,6 @@ def mepa():
         print("fim de arquivo inesperado")
         exit()
 
-
 if __name__ == '__main__':
     arq = "teste1.pas" ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
@@ -782,14 +771,12 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
 
-
     parser()
 
     # Para mexer nesta função deve alterar a tabela de simbolos para uma lista, e mudar a forma de adição na função de simbolos no lexico
     #corrigeTabSimbol()
 
     atualizaTabSimbol()
-
 
     ##for keys, values in simbolos.items():
     ##    print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
@@ -802,9 +789,6 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     mepa()
-
-
-
 
     ## testando tabela de simbolos usando o dict, minha idéia é manter o dicionário para ter certeza da existencia de apenas 1 termo para cada coisa
     '''
