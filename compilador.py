@@ -7,6 +7,7 @@ lookahead = ""
 lines = 0
 nivel = 0
 contador = 0
+listaCodigoLex = []   #TESTE LEO
 
 class symbolTabel:         # classe tabela de simbolos
 
@@ -312,13 +313,11 @@ def printToken(linha,token):  ## funcao faz impressao no formato Demandado
     else:
         print("< {}, {} >".format(linha, token.upper()))
 
-
 def textoToString(texto):  ## recebe uma lista de linhas e transforma num vetor de caracteres
     string = ""
     for i in range(len(texto)):
         string += texto[i]
     return string
-
 
 ## ------------------  ANALISADOR LEXICO --------------------------------------
 
@@ -635,8 +634,10 @@ def consome(token):
 
 def parser():
     global lookahead
+    global listaCodigoLex   ## teste leo
 ##    PreencherTabSimbolos()
     lookahead = anaLex().identifier
+    listaCodigoLex.append(lookahead) # teste leo
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex().identifier
     P()
@@ -679,11 +680,9 @@ def corrigeTabSimbol():
             marcadorVAR=-1
 #        print (simbolos[i].identifier)
 
-
     print ("-----------------------------------------------")
 
     dicionarioTemp = dict()
-
 
     for i in range(len(simbolos)):
 
@@ -695,8 +694,6 @@ def atualizaTabSimbol():
         if values.category == "VARS":
             values.variantInfo[1] = deslocamento
             deslocamento+=1
-
-
 
 ## -------------- Gera Codigo -------
 def Gera(rotulo, codigo, par1, par2, par3):
@@ -739,8 +736,6 @@ def Fator(t):
             print ("ERRO")
         atr = tab_simbolo[atomo1]
 
-
-
 def inicia():
 
     Gera(" ","INPP") ##PROGRAM
@@ -775,14 +770,12 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
 
-
     parser()
 
     # Para mexer nesta função deve alterar a tabela de simbolos para uma lista, e mudar a forma de adição na função de simbolos no lexico
     #corrigeTabSimbol()
 
     atualizaTabSimbol()
-
 
     ##for keys, values in simbolos.items():
     ##    print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
@@ -795,9 +788,6 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     mepa()
-
-
-
 
     ## testando tabela de simbolos usando o dict, minha idéia é manter o dicionário para ter certeza da existencia de apenas 1 termo para cada coisa
     '''
