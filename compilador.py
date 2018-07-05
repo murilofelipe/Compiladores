@@ -472,6 +472,7 @@ def AS():  ## <Assignment Statement>
 def RS():  ## <Read Statement>
     global lookahead
     consome("READ")
+    mepaLista.append("LEIT")
     consome("LP")
     V()
     while lookahead == "COMMA":
@@ -592,6 +593,7 @@ def MO():  ## <Multiplying Operator>
 
 def V():  ## <Variable>    ## esssa producao elimina necessidade de criar IV-AV-EV-VI
     consome("IDENTIFIER")
+
     if lookahead == "LB":
         consome("LB")
         E()
@@ -644,12 +646,13 @@ def parser():
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex().identifier
     P()
-    for keys in simbolos:   # PRINT DEBUG
-        print(keys)    # PRINT DEBUG
-        print(simbolos[keys].identifier)  # print
-        print(simbolos[keys].category)  # print
-        print()
-
+    '''
+        for keys in simbolos:   # PRINT DEBUG
+            print(keys)    # PRINT DEBUG
+            print(simbolos[keys].identifier)  # print
+            print(simbolos[keys].category)  # print
+            print()
+    '''
     if lookahead == "FIM":
         print("< OK - Sucesso >")
 
@@ -698,10 +701,12 @@ def corrigeTabSimbol():
         print (simbolos[i].identifier,simbolos[i].category,simbolos[i].variantInfo[0],simbolos[i].variantInfo[1] )
 
 def atualizaTabSimbol():
-    deslocamento = -1
+    deslocamento = 0
+    print("Tabela de simbolo")
     for keys,values in simbolos.items():
         if values.category == "VARS":
             values.variantInfo[1] = deslocamento
+            print(keys, values.identifier, values.category, values.variantInfo[0], values.variantInfo[1] )
             deslocamento+=1
 
 ## -------------- Gera Codigo -------
@@ -760,9 +765,9 @@ def mepa():
     while lookahead == "LINHA" or lookahead == "WS" or lookahead == "COMMENT":
         lookahead = anaLex().identifier
 
-    inicia()
+    P()
     if lookahead == "FIM":
-        print("< OK - Sucesso >")
+        print("< Compilação correta >")
 
     else:
         print("fim de arquivo inesperado")
@@ -785,10 +790,14 @@ if __name__ == '__main__':
     #corrigeTabSimbol()
 
     atualizaTabSimbol()
-
+    
     ##for keys, values in simbolos.items():
     ##    print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
+
+    ## testando tabela de simbolos usando o dict, minha idéia é manter o dicionário para ter certeza da existencia de apenas 1 termo para cada coisa
+    '''
+    
     ilexema=0
     lexema=""
     arquivo = strTexto
@@ -797,9 +806,6 @@ if __name__ == '__main__':
     token = ""
     FIM = tamTexto
     mepa()
-
-    ## testando tabela de simbolos usando o dict, minha idéia é manter o dicionário para ter certeza da existencia de apenas 1 termo para cada coisa
-    '''
     texto3 = ['and', 'or']
     tab_simbolos = dict(AND=texto3, ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
                     ELSE='ELSE', END='END', FALSE='FALSE', FUNCTION='FUNCTION', IF='IF',
