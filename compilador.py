@@ -8,7 +8,7 @@ lines = 0
 nivel = 0
 contador = 0
 varType = "none"
-
+mepaLista = []
 class symbolTabel:         # classe tabela de simbolos
 
     identifier = ''
@@ -327,6 +327,7 @@ def textoToString(texto):  ## recebe uma lista de linhas e transforma num vetor 
 def P():  ## <program>
     global lookahead
     consome("PROGRAM")
+    mepaLista.append("INPP")
     consome("IDENTIFIER")
     consome("SEMICOLON")
     BLCK()
@@ -344,6 +345,7 @@ def VDP():  ## <variable declaration part>
         varType = "VARS"  #atualiza tipo de variavel que sera preenchido na tabela de simbolos
         consome("VAR")
         VD()
+        mepaLista.append("AMEM {}".format(contador))
         consome("SEMICOLON")
         while lookahead == "IDENTIFIER":
             VD()
