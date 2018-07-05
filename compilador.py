@@ -654,7 +654,7 @@ def parser():
             print()
     '''
     if lookahead == "FIM":
-        print("< OK - Sucesso >")
+        print("< Compilação está correta >")
 
     else:
         print("fim de arquivo inesperado")
@@ -774,7 +774,7 @@ def mepa():
         exit()
 
 if __name__ == '__main__':
-    arq = "teste1.pas" ##input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
+    arq = input()   ## ARRUMAR AQUI NO FIM DO TRABALHO ********************
     f = open(arq, 'r')
     texto = f.readlines()  ## lista de linhas  do texto
     strTexto = textoToString(texto)  ## vetor de caracteres do texto inteiro já maiusculo
@@ -790,7 +790,7 @@ if __name__ == '__main__':
     #corrigeTabSimbol()
 
     atualizaTabSimbol()
-    
+
     ##for keys, values in simbolos.items():
     ##    print (keys, simbolos[keys].category,simbolos[keys].variantInfo[1])
 
