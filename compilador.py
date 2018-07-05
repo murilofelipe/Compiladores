@@ -59,6 +59,7 @@ FIM = 0
 # criacao de dicionário de Simbolos
 simbolos = dict()   # Tabela de Simbolos
 tabTipo = dict(INTEGER='INTEGER',DOUBLE='DOUBLE',BOOLEAN='BOOLEAN')
+pilha=[]
 
 palavrasReservadas = dict(AND='AND', ARRAY='ARRAY', BEGIN='BEGIN', BOOLEAN='BOOLEAN', CHAR='CHAR', DIV='DIV', DO='DO',
                 ELSE='ELSE', END='END', FALSE='FALSE', FUNCTION='FUNCTION', IF='IF',
